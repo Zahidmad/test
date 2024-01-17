@@ -1,0 +1,33 @@
+variables:
+  DOCKER_TLS_VERIFY: 1
+  IMAGE_TAG: $CI_PROJECT_NAME/${CI_COMMIT_BRANCH}:$CI_PIPELINE_IID
+stages:
+- build
+- deploy
+
+
+build_common:
+  stage: build
+  image:
+    name: nexus.sosial.gov.az:8085/kaniko
+    entrypoint: [""]
+  script:
+  - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_JOB_TOKEN\"}}}" > /kaniko/.docker/config.json
+  - /kaniko/executor --context "${CI_PROJECT_DIR}" --dockerfile "Dockerfile" --insecure-pull --destination nexus.sosial.gov.az:8085/$IMAGE_TAG --insecure
+  rules:
+  - if: '$CI_COMMIT_BRANCH == "master"'
+  tags:
+  - k8s-test
+
+deploy_dev:
+  stage: deploy
+  image: nexus.sosial.gov.az:8085/kubehelm:1
+  script:
+  - cd deploy
+  - cat ingress.yaml | envsubst|  kubectl apply -f -
+  - cat service.yaml  | envsubst|  kubectl apply -f -
+  - cat deploy.yaml | envsubst|  kubectl apply -f -
+  rules:
+  - if: '$CI_COMMIT_BRANCH == "master"'
+  tags:
+  - k8s-test

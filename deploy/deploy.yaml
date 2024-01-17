@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: $CI_PROJECT_NAME
+  namespace: demo-world
+  labels:
+    app: $CI_PROJECT_NAME
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: $CI_PROJECT_NAME
+  template:
+    metadata:
+      labels:
+        app: $CI_PROJECT_NAME
+    spec:
+      containers:
+      - name: $CI_PROJECT_NAME
+        image: $CI_REGISTRY_IMAGE_NEW:$CI_PIPELINE_IID
+        env:
+        - name: TZ
+          value: 'Asia/Baku'
+        imagePullPolicy: "Always"
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: tz
+          mountPath: /etc/localtime
+          subPath: Baku
+      volumes:
+      - name: tz
+        configMap:

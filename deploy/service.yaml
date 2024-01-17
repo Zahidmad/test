@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: $CI_PROJECT_NAME-svc
+  namespace: demo-world
+  labels:
+    app: $CI_PROJECT_NAME
+spec:
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
+  selector:
+    app: $CI_PROJECT_NAME

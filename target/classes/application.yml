@@ -1,3 +1,5 @@
 spring:
   kafka:
-    bootstrap-servers: 192.168.177.142:31586
+    bootstrap-servers: 192.168.177.144:31586
+
+

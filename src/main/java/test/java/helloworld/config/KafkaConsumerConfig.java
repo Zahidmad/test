@@ -20,7 +20,7 @@ public class KafkaConsumerConfig {
     public ConsumerFactory<String, String> consumerFactory() {
         Map<String, Object> props = new HashMap<>();
         props.put(
-                ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.177.142:31586");
+                ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka-service:9092");
         props.put(
                 ConsumerConfig.GROUP_ID_CONFIG, "group");
         props.put(
